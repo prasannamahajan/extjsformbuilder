@@ -13,6 +13,46 @@ var displayResponse = function(){
                         win.show();
                         };
 
+var Stringspace = function (len) {
+	var t = [], i;
+	for (i = 0; i < len; i++) {
+		t.push(' ');
+	}
+	return t.join('');
+};
+
+var format = function (edit) {
+				var text = edit.replace(/\n/g, ' ').replace(/\r/g, ' ');
+				var t = [];
+				var tab = 0;
+				var inString = false;
+				for (var i = 0, len = text.length; i < len; i++) {
+					var c = text.charAt(i);
+					if (inString && c === inString) {
+						// TODO: \\"
+						if (text.charAt(i - 1) !== '\\') {
+							inString = false;
+						}
+					} else if (!inString && (c === '"' || c === "'")) {
+						inString = c;
+					} else if (!inString && (c === ' ' || c === "\t")) {
+						c = '';
+					} else if (!inString && c === ':') {
+						c += ' ';
+					} else if (!inString && c === ',') {
+						c += "\n" + Stringspace(tab * 2);
+					} else if (!inString && (c === '[' || c === '{')) {
+						tab++;
+						c += "\n" + Stringspace(tab * 2);
+					} else if (!inString && (c === ']' || c === '}')) {
+						tab--;
+						c = "\n" + Stringspace(tab * 2) + c;
+					}
+					t.push(c);
+				}
+				return t.join('');
+			};
+			
 var navigate = function (panel, direction) {
             var layout = panel.getLayout();
             layout[direction]();
@@ -131,7 +171,7 @@ var formPn = new Ext.form.Panel({
 									    	  formPn.add(datef);
 									    	   }
 									//Ext.getCmp('file').setValue(jsonResponse);
-									Ext.getCmp('file').setValue(JSON.stringify(obj));
+									Ext.getCmp('file').setValue(format(JSON.stringify(obj)));
                              },
                              failure: function(form, action) {
                                  Ext.Msg.alert('Failed', action.result.msg);
