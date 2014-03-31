@@ -1,0 +1,15 @@
+question : Tell me about your information ?
+tip : Provide your personal details 
+1 : text,Name
+2 : textarea,Address
+===
+question : Tell me about your birth information ?
+tip : Provide only your information 
+4 : textarea,Birthplace
+5 : date,Date of Birth
+===
+question : Tell me about your Company information ?
+tip : Provide only your information 
+7 : text,Company
+8 : date,Date of Joining
+end

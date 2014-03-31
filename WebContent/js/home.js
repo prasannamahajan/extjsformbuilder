@@ -3,6 +3,15 @@ var documentId = "documentid";
 var jsonUrl = "1.json";
 var active="card-";
 document.title = "Title of document";
+var jsonResponse="";
+var displayResponse = function(){
+ var win = Ext.widget('window', {
+                                title: 'Terms of Use',
+                                modal: true,
+                                html: jsonResponse,           
+                        });
+                        win.show();
+                        };
 
 var navigate = function (panel, direction) {
             var layout = panel.getLayout();
@@ -15,14 +24,31 @@ var navigate = function (panel, direction) {
             	Ext.getCmp('finish').setDisabled(true);
         }; 
 
+ var disp = new Ext.form.Panel({
+           bodyStyle: 'padding: 10px',
+            layout:'card',
+            title: "JSON viewer",
+           // autoHeight: true,
+           // frame:true,
+            width:450,
+            autoWidth: true,
+            labelAlign: 'right',
+            items: [
+			{
+            xtype:'textareafield',
+            name: 'file',
+            id:'file',
+            allowBlank:false
+        }]
+});
 var formPn = new Ext.form.Panel({
             bodyStyle: 'padding: 10px',
             layout: 'card',
             title: documentName,
             autoHeight: true,
             url : 'StorageService',
-            frame:true,
-            width:500,
+           // frame:true,
+            width:450,
             autoWidth: true,
             labelAlign: 'right',
             bbar: [{
@@ -71,8 +97,8 @@ var formPn = new Ext.form.Panel({
             title: "JSON editor",
            // autoHeight: true,
             url : 'convert',
-            frame:true,
-            width:500,
+           // frame:true,
+            width:450,
             autoWidth: true,
             labelAlign: 'right',
             items: [
@@ -95,6 +121,7 @@ var formPn = new Ext.form.Panel({
 								
 							       		var obj;
 							       		obj = Ext.decode(opts.response.responseText);
+							       		jsonResponse = opts.response.responseText;
 									       var data = obj.data;
 									       var length = obj.data.length;
 									       active = active + (length-1);
@@ -103,16 +130,27 @@ var formPn = new Ext.form.Panel({
 									    	   var datef =Ext.ComponentManager.create(data[iter]);
 									    	  formPn.add(datef);
 									    	   }
-									      // formPn.render('form-right');
+									//Ext.getCmp('file').setValue(jsonResponse);
+									Ext.getCmp('file').setValue(JSON.stringify(obj));
                              },
                              failure: function(form, action) {
                                  Ext.Msg.alert('Failed', action.result.msg);
                              }
                          });
 					}
+			}},
+			 {
+				text : 'Show JSON',
+				margin : '10 0 0 0',
+					handler : function() {
+							displayResponse();
+              			
 			}}]
             });
             
+
+            
+ 
  
  
 Ext.onReady(function() {
@@ -122,10 +160,10 @@ Ext.onReady(function() {
         renderTo: Ext.getBody(),
         layout: {
             type: 'table',
-            columns: 2
+            columns: 3
         },
         // applied to child components
-        defaults: {frame:true, width:600, height: 550},
-        items:[jsonPn,formPn]
+        defaults: {frame:true, width:500, height: 550},
+        items:[jsonPn,formPn,disp]
     });
 });
